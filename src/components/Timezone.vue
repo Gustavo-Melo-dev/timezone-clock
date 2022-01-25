@@ -1,36 +1,52 @@
 <template>
   <div id="timezone">
-    <select @change="($event) => getZone($event.target.value)" id="selectTimezone" v-model="data.timezoneSelected">
+    <select @change="($event) => getInfo($event.target.value)" id="selectTimezone" v-model="data.timezoneSelected">
         <option v-for="time in data.times" :key="time" :value="time">{{ time }}</option>
     </select>
-    <p class="text-xl bg-green-300 my-5">{{data.timezoneSelected}}</p>
+    <div class="info-table">
+        <InfoTable :timezoneSelected="data.timezoneSelected" :date="data.date" :time="data.time" :utc_offset="data.utc_offset"/>
+    </div>
   </div>
 </template>
 
 <script>
 import { defineComponent, reactive } from "@vue/runtime-core";
 import api from '../services/api'
+import InfoTable from './InfoTable.vue'
 
 export default defineComponent({
     name: "Timezone",
+    components: {
+        InfoTable
+    },
     setup(){
         const data = reactive({
             times: {},
-            timezoneSelected: ''
+            timezoneSelected: '',
+            date: '',
+            time: '',
+            utc_offset: ''
         })
 
         api.allTimezone().then((response) => {
             data.times = response.data
         })
 
-        async function getZone(zone){
+        console.log(data.timezoneSelected)
+
+        async function getInfo(zone) {
             const timezone = await api.timezone(zone)
-            data.timezoneSelected = timezone.data.datetime
+            data.timezoneSelected = timezone.data.timezone
+            var moment = require('moment-timezone');
+            data.date = moment().tz(timezone.data.timezone).format('DD/MM/YYYY')
+            data.time = moment().tz(timezone.data.timezone).format('HH:mm')
+            data.utc_offset = timezone.data.utc_offset
         }
 
+                
         return {
             data,
-            getZone
+            getInfo
         }
     }
 })

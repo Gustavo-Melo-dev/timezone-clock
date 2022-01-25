@@ -1,7 +1,6 @@
 <template>
   <div id="home">
     <Timezone />
-    <InfoTable />
   </div>
 </template>
 
