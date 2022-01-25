@@ -17,7 +17,7 @@ import InfoTable from './InfoTable.vue'
 export default defineComponent({
     name: "Timezone",
     components: {
-        InfoTable
+        InfoTable,
     },
     setup(){
         const data = reactive({
